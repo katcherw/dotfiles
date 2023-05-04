@@ -69,7 +69,9 @@ local plugins = {
   {
     'williamboman/mason.nvim',
     build = ":MasonUpdate",
-    require("mason").setup(),
+    config = function()
+      require("mason").setup()
+    end
   },
   {
     'williamboman/mason-lspconfig.nvim',
@@ -160,6 +162,13 @@ local plugins = {
 require("lazy").setup(plugins)
 
 -- ================= Options ================= --
+
+-- Add lua/local.lua to add options for local server
+local tmpf = io.open("lua/local.lua", "r")
+if tmpf ~= nil then
+  io.close(tmpf)  
+  require("local")
+end
 
 vim.o.termguicolors = true
 vim.opt.showmode = false  -- don't need because of lualine
