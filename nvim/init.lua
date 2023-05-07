@@ -29,10 +29,6 @@ local plugins = {
     --'liuchengxu/space-vim-dark',
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
-    config = function()
-      -- load the colorscheme here
-      vim.cmd([[colorscheme tokyonight-night]])
-    end,
   },
 
   -- Figures out spaces/tabs by reading existing file
@@ -156,7 +152,17 @@ local plugins = {
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
     }
-  }
+  },
+
+  {
+    "folke/zen-mode.nvim",
+    opts = {
+      plugins = {
+        ruler = true,
+        showcmd = true,
+      }
+    }
+  },
 }
 
 require("lazy").setup(plugins)
@@ -172,6 +178,7 @@ end
 
 vim.o.termguicolors = true
 vim.opt.showmode = false  -- don't need because of lualine
+vim.cmd([[colorscheme tokyonight-night]])
 
 -- Indentation --
 vim.o.tabstop = 4					-- maximum width of tab character (measured in spaces)
@@ -302,4 +309,5 @@ vim.keymap.set('n', '<leader>fh', builtin.help_tags, {desc = "telescope help_tag
 vim.keymap.set('n', '<leader>g', builtin.grep_string, {desc = "telescope grep_string"})
 
 vim.keymap.set('n', '<leader>t', ':Neotree<CR>', {desc = "Neo-tree"})
-
+vim.keymap.set('n', '<leader>z', ':ZenMode<CR>', {desc = "Zen mode"})
+vim.keymap.set('n', '<leader>w', '<C-w><C-w>', {desc = "Next window"})
