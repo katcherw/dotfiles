@@ -25,6 +25,7 @@
     (evil-mode t)
     :config
     (evil-set-leader 'normal (kbd "SPC")))
+    ;(define-key evil-normal-state-map (kbd "SPC") 'cscope-show-entry-other-window))
 
 ;(evil-define-key 'normal 'global (kbd "<leader>g") 'g-at-point)
 
@@ -88,6 +89,12 @@
     :defer t
     :init
     (which-key-mode))
+
+(use-package xcscope
+    :defer t
+    :init
+    (cscope-setup)
+    (setq cscope-dateabase-regexps '~))
 
 ;; use ibuffer instead of list-buffers
 (if (>= emacs-major-version 22) 
@@ -239,22 +246,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; insert functions
-;(global-unset-key "\C-t")
-;(global-set-key "\C-t\C-h" 'insert-function-header)
 (global-set-key "\C-xg" 'g-at-point)
-(global-set-key "\C-xp" 'gp-at-point)
-(global-set-key (kbd "C-=") 'tweakemacs-duplicate-one-line)
-(global-set-key "\M-o" 'tweakemacs-delete-one-line)
-(global-set-key [C-M-down] 'tweakemacs-move-one-line-downward)
-(global-set-key [C-M-up] 'tweakemacs-move-one-line-upward)
 (define-key global-map (kbd "RET") 'newline-and-indent)
 
-(global-set-key (kbd "M-p") 'next-multiframe-window)
-(global-set-key (kbd "M-P") 'rotate-windows)
-(global-set-key (kbd "\C-xo") 'next-multiframe-window)
+(global-set-key (kbd "M-o") 'next-multiframe-window)
+(global-set-key (kbd "C-M-O") 'evil-window-rotate-downwards)
+;(global-set-key (kbd "\C-xo") 'next-multiframe-window)
 
 (evil-define-key 'normal 'global (kbd "<leader>g") '("grep symbol" . g-at-point))
+(evil-define-key 'normal 'global (kbd "<leader>b") '("buffer next" . helm-mini))
+(evil-define-key 'normal 'global (kbd "<leader>o") '("other window" . next-multiframe-window))
 (evil-define-key 'normal 'global (kbd "<leader>ff") '("find files" . helm-find))
+
+(evil-define-key 'normal 'global (kbd "<leader>ss") '("find symbol" . cscope-find-this-symbol))
+(evil-define-key 'normal 'global (kbd "<leader>s=") '("find assignments to this symbol" . cscope-find-assignments-to-this-symbol))
+(evil-define-key 'normal 'global (kbd "<leader>sd") '("find global definition" . cscope-find-global-definition))
+(evil-define-key 'normal 'global (kbd "<leader>s.") '("find global definition no prompt" . cscope-find-global-definition-no-prompting))
+(evil-define-key 'normal 'global (kbd "<leader>sc") '("find functions calling this symbol" . cscope-find-functions-calling-this-function))
+(evil-define-key 'normal 'global (kbd "<leader>sC") '("find called functions" . cscope-find-called-functions))
+(evil-define-key 'normal 'global (kbd "<leader>st") '("find text string" . cscope-find-this-text-string))
+(evil-define-key 'normal 'global (kbd "<leader>se") '("find egrep pattern" . cscope-find-egrep-pattern))
+(evil-define-key 'normal 'global (kbd "<leader>sf") '("find find file" . cscope-find-this-file))
+(evil-define-key 'normal 'global (kbd "<leader>si") '("find files including file" . cscope-find-files-including-file))
+(evil-define-key 'normal 'global (kbd "<leader>sb") '("display buffer" . cscope-display-buffer))
+(evil-define-key 'normal 'global (kbd "<leader>sn") '("next result" . cscope-history-forward-line-current-result))
+(evil-define-key 'normal 'global (kbd "<leader>sN") '("previous result" . cscope-history-backward-line-current-result))
 
 (if (>= emacs-major-version 24)
 	(progn
@@ -283,11 +299,6 @@
   (interactive "sEnter search expression: ")
   (grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -iname \"*.S\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" -o -name \"*.module\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
 
-(defun gp (expr)
-  "greps all project c files"
-  (interactive "sEnter search expression: ")
-  (grep-find (concat "find $PROJECT '(' -name \"*.c\" -o -name \"*.h\" -o -iname \"*.S\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" -o -name \"*.module\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
-
 (defun gh (expr)
   "greps all header files"
   (interactive "sEnter search expression: ")
@@ -298,32 +309,25 @@
   (interactive "sEnter search expression: ")
   (grep-find (concat "find . -name \"*\" -exec grep -nH " expr " \{\} /dev/null ';'")))
 
-;(defun gd-at-point ()
-;  "greps all c files in DP tree for the word at the current point"
-;  (interactive)
-;  (grep-find (concat "find -H ~/d ~/c/drivers/dpdriver '(' -name \"*.c\" -o -name \"*.h\" -o -iname \"*.S\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
-
 (defun g-at-point ()
   "greps all c files in current directory for the word at the current point"
   (interactive)
   (grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -iname \"*.S\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
 
-(defun gp-at-point ()
-  "greps all c files in project tree for the word at the current point"
-  (interactive)
-  (grep-find (concat "find -H $PROJECT '(' -name \"*.c\" -o -name \"*.h\" -o -iname \"*.S\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
-
 (defun dp ()
   "dired at project path"
   (interactive)
-  ;;(dired (getenv "PROJECT")))
-  (dired "/gbuilder@uslinux01.commvault.com:/build/11.0/Build80_wkatcher5/cxunix/source/MediaAgent/3dfs2/ObjectStore"))
+  (dired (concat (getenv "PROJECT") "/cxunix/source/MediaAgent/3dfs2/ObjectStore")))
 
-(defun dp2 ()
+(defun dpm ()
   "dired at project path"
   (interactive)
-  ;;(dired (getenv "PROJECT")))
-  (dired "/gbuilder@uslinux01.commvault.com:/build/11.0/Build80_SP9_wkatcher/cxunix/source/MediaAgent/3dfs2/ObjectStore"))
+  (dired (concat (getenv "PROJECT") "/cxunix/source/MediaAgent")))
+
+(defun dpi ()
+  "dired at project path"
+  (interactive)
+  (dired (concat (getenv "PROJECT") "/cxunix/source/include")))
 
 (defun convert-buffer-to-unix ()
   "Converts a buffer to UNIX encoding"
@@ -369,70 +373,6 @@
 (setq c-default-style "stroustrup"
 	  c-basic-offset 4)
 (setq lisp-indent-offset 4)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Emacs Tweaks from http://wordpress.com/tag/emacs/3/
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun tweakemacs-duplicate-one-line ()
-  "Duplicate the current line. There is a little bug: when current line is the last line of the buffer, this will not work as expected. Anyway, that's ok for me."
-  (interactive)
-  (let ((start (progn (beginning-of-line) (point)))
-	(end (progn (next-line 1) (beginning-of-line) (point))))
-    (insert-buffer-substring (current-buffer) start end)
-    (forward-line -1)))
-
-(defun tweakemacs-delete-one-line ()
-  "Delete current line."
-  (interactive)
-  (beginning-of-line)
-  (kill-line)
-  (kill-line))
-
-(defun tweakemacs-move-one-line-downward ()
-  "Move current line downward once."
-  (interactive)
-  (forward-line)
-  (transpose-lines 1)
-  (forward-line -1))
-
-(defun tweakemacs-move-one-line-upward ()
-  "Move current line upward once."
-  (interactive)
-  (transpose-lines 1)
-  (forward-line -2))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Rotating windows, from emacswiki.org
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun rotate-windows (arg)
-  "Rotate your windows; use the prefix argument to rotate the other direction"
-  (interactive "P")
-  (if (not (> (count-windows) 1))
-      (message "You can't rotate a single window!")
-    (let* ((rotate-times (if (and (numberp arg) (not (= arg 0))) arg 1))
-           (direction (if (or (< rotate-times 0) (equal arg '(4)))
-                          'reverse
-                        (lambda (x) x)))
-           (i 0))
-      (while (not (= rotate-times 0))
-        (while  (< i (- (count-windows) 1))
-          (let* ((w1 (elt (funcall direction (window-list)) i))
-                 (w2 (elt (funcall direction (window-list)) (+ i 1)))
-                 (b1 (window-buffer w1))
-                 (b2 (window-buffer w2))
-                 (s1 (window-start w1))
-                 (s2 (window-start w2))
-                 (p1 (window-point w1))
-                 (p2 (window-point w2)))
-            (set-window-buffer-start-and-point w1 b2 s2 p2)
-            (set-window-buffer-start-and-point w2 b1 s1 p1)
-            (setq i (1+ i))))
-
-        (setq i 0
-              rotate-times
-              (if (< rotate-times 0) (1+ rotate-times) (1- rotate-times)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Smart inference of indentation style from emacswiki
