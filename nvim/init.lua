@@ -61,46 +61,24 @@ local plugins = {
     },
   },
 
-  -- download and install LSP servers - enter :MasonInstall clangd the first time
+  -- LSP support. Use lsp-zero for easy configuration
   {
-    'williamboman/mason.nvim',
-    build = ":MasonUpdate",
-    config = function()
-      require("mason").setup()
-    end
+    'VonHeikemen/lsp-zero.nvim', 
+    branch = 'v3.x',
+    lazy = true,
+    config = false,
   },
   {
-    'williamboman/mason-lspconfig.nvim',
-    config = function()
-      local servers = { 'rust_analyzer', 'clangd' }
-      for _, lsp in pairs(servers) do
-        require('lspconfig')[lsp].setup({
-          on_attach = on_attach,
-          flags = {
-            -- This will be the default in neovim 0.7+
-            debounce_text_changes = 150,
-          }
-        })
-      end
-      require("mason-lspconfig").setup()
-    end, 
-    dependencies = { {'williamboman/mason.nvim'} },
+    'neovim/nvim-lspconfig',
+    dependencies = {'hrsh7th/cmp-nvim-lsp'},
   },
   {
-    "neovim/nvim-lspconfig",
-    config = function()
-       --require("nvim-lspconfig").clangd.setup({})
-    end,
-    dependencies = { {'williamboman/mason-lspconfig'} }
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      {'L3MON4D3/LuaSnip'},
+    }
   },
 
-  --[[
-  {
-    "p00f/clangd_extensions",
-    config = function()   
-      require("clangd_extensions").setup() { }
-      end 
-  },]]
 
   --[[
   {'simrat39/rust-tools.nvim'},
@@ -129,20 +107,20 @@ local plugins = {
   {'hrsh7th/nvim-cmp'},
 
   -- Useful completion sources:
-  {'hrsh7th/cmp-nvim-lsp'},
-  {'hrsh7th/cmp-nvim-lua'},
-  {'hrsh7th/cmp-nvim-lsp-signature-help'},
-  {'hrsh7th/cmp-vsnip'},
-  {'hrsh7th/cmp-path'},                              
-  {'hrsh7th/cmp-buffer'},                            
-  {'hrsh7th/vim-vsnip'},     
+  --{'hrsh7th/cmp-nvim-lsp'},
+  --{'hrsh7th/cmp-nvim-lua'},
+  --{'hrsh7th/cmp-nvim-lsp-signature-help'},
+  --{'hrsh7th/cmp-vsnip'},
+  --{'hrsh7th/cmp-path'},                              
+  --{'hrsh7th/cmp-buffer'},                            
+  --{'hrsh7th/vim-vsnip'},     
 
   -- fuzzy finder
   {
-    'nvim-telescope/telescope.nvim', tag = '0.1.1',
-    dependencies = { {'nvim-lua/plenary.nvim'} }
+    'nvim-telescope/telescope.nvim',
+     dependencies = { {'nvim-lua/plenary.nvim'} }
   }, 
-
+  
   -- neotree file explorer
   {
     "nvim-neo-tree/neo-tree.nvim",
@@ -151,7 +129,7 @@ local plugins = {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
-    }
+    },
   },
 
   {
@@ -163,22 +141,38 @@ local plugins = {
       }
     }
   },
+
+  --[[
+  {
+    'dhananjaylatkar/cscope_maps.nvim',
+    dependencies = {"folke/which-key.nvim", 'nvim-telescope/telescope.nvim', 'nvim-tree/nvim-web-devicons'},
+    commit = "fe9996c",
+    opts = {
+      disable_maps = false,
+      cscope = {
+        db_file = "/home/wkatcher/cscope.out",
+        exec = "cscope",
+        picker = "quickfix",
+        use_telescope =true,
+        skip_picker_for_single_result = false,
+        db_build_cmd_args = { "-bqv" },
+      }
+    },
+  },]]
+
+  {
+    'github/copilot.vim',
+  },
+
 }
 
 require("lazy").setup(plugins)
 
 -- ================= Options ================= --
 
--- Add lua/local.lua to add options for local server
-local tmpf = io.open("lua/local.lua", "r")
-if tmpf ~= nil then
-  io.close(tmpf)  
-  require("local")
-end
-
 vim.o.termguicolors = true
 vim.opt.showmode = false  -- don't need because of lualine
-vim.cmd([[colorscheme tokyonight-night]])
+vim.cmd.colorscheme('tokyonight-night')
 
 -- Indentation --
 vim.o.tabstop = 4					-- maximum width of tab character (measured in spaces)
@@ -197,93 +191,28 @@ vim.o.incsearch = true             -- bool: Use incremental search
 --opt.hlsearch = false             -- bool: Highlight search matches
 
 vim.wo.number = true
-vim.wo.relativenumber = true
+vim.wo.relativenumber = false
 vim.o.autochdir = true
+vim.cmd("autocmd BufEnter * set formatoptions-=r")
+vim.o.makeprg = 'make64'
 
---[[
-local rt = require("rust-tools")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-rt.setup({
-  server = {
-    on_attach = function(_, bufnr)
-      -- Hover actions
-      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
-      -- Code action groups
-      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
-    end,
-  },
-})
+-- lsp config
+local lsp_zero = require('lsp-zero')
 
+lsp_zero.on_attach(function(client, bufnr)
+  -- see :help lsp-zero-keybindings
+  -- to learn the available actions
+  lsp_zero.default_keymaps({
+    buffer = bufnr,
+    preserve_mappings = false
+  })
+end)
 
--- interact with rust-analyzer
-local rt = require("rust-tools")
-rt.setup({
-  server = {
-    on_attach = function(_, bufnr)
-      -- Hover actions
-      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
-      -- Code action groups
-      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
-    end,
-  },
-})
-
-]]
-
--- Completion Plugin Setup
-local cmp = require 'cmp'
-cmp.setup({
-  -- Enable LSP snippets
-  snippet = {
-    expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body)
-    end,
-  },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    -- Add tab support
-    ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-    ['<Tab>'] = cmp.mapping.select_next_item(),
-    ['<C-S-f>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true,
-    })
-  },
-  -- Installed sources:
-  sources = {
-    { name = 'path' },                              -- file paths
-    { name = 'nvim_lsp', keyword_length = 3 },      -- from language server
-    { name = 'nvim_lsp_signature_help'},            -- display function signatures with current parameter emphasized
-    { name = 'nvim_lua', keyword_length = 2},       -- complete neovim's Lua runtime API such vim.lsp.*
-    { name = 'buffer', keyword_length = 2 },        -- source current buffer
-    { name = 'vsnip', keyword_length = 2 },         -- nvim-cmp source for vim-vsnip 
-    { name = 'calc'},                               -- source for math calculation
-  },
-  window = {
-      completion = cmp.config.window.bordered(),
-      documentation = cmp.config.window.bordered(),
-  },
-  formatting = {
-      fields = {'menu', 'abbr', 'kind'},
-      format = function(entry, item)
-          local menu_icon ={
-              nvim_lsp = 'λ',
-              vsnip = '⋗',
-              buffer = 'Ω',
-              path = '🖫',
-          }
-          item.menu = menu_icon[entry.source.name]
-          return item
-      end,
-  },
-})
-
+require('lspconfig').clangd.setup{
+  flags = {
+    clangd = '/home/gbuilder/wkatcher/.vscode-server/data/User/globalStorage/llvm-vs-code-extensions.vscode-clangd/install/17.0.3/clangd_17.0.3/bin/clangd',
+  }
+}
 
 -- ================= Key mappings ================= --
 
@@ -301,6 +230,11 @@ vim.keymap.set("n", "<C-b>", "<C-b>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
+-- quicker buffer switching
+vim.keymap.set("n", '<leader>b', ":b#<CR>", {desc = "last used buffer"})
+vim.keymap.set("n", '<leader>n', ":bn<CR>", {desc = "next buffer"})
+vim.keymap.set("n", '<leader>p', ":bp<CR>", {desc = "previous buffer"})
+
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {desc = "telescope find_files"})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {desc = "telescope live_grep"})
@@ -311,3 +245,4 @@ vim.keymap.set('n', '<leader>g', builtin.grep_string, {desc = "telescope grep_st
 vim.keymap.set('n', '<leader>t', ':Neotree<CR>', {desc = "Neo-tree"})
 vim.keymap.set('n', '<leader>z', ':ZenMode<CR>', {desc = "Zen mode"})
 vim.keymap.set('n', '<leader>w', '<C-w><C-w>', {desc = "Next window"})
+
