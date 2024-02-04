@@ -9,7 +9,8 @@
 ; package support. install new package with list-packages, then mark
 ; with i and press x
 (eval-when-compile
-    (require 'use-package))
+  (require 'use-package))
+(package-initialize)
 (add-to-list 'package-archives
     '("melpa" . "http://melpa.org/packages/")
     t)
@@ -20,6 +21,7 @@
 (use-package evil
     :defer t
     :init
+    (setq evil-want-keybinding nil)
     (setq evil-toggle-key "C-x C-z")
     (setq evil-insert-state-cursor '(bar "yellow"))
     (evil-mode t)
@@ -249,6 +251,37 @@
         (setq indent-tabs-mode t)
         (setq python-indent-offset 4)))
 
+;; Tree-sitter
+;(use-package treesit
+;  :commands (treesit-install-language-grammar nf/treesit-install-all-languages)
+;  :init
+  (setq treesit-language-source-alist
+      '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+      (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+      (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+      (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+      (make . ("https://github.com/alemuller/tree-sitter-make"))
+      (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "ocaml/src" "ocaml"))
+      (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+      (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))))
+
+; use tree sitter modes instead of normal major modes
+(setq major-mode-remap-alist
+    '((c++-mode . c++-ts-mode)
+      (c-mode . c-ts-mode)
+      (c-or-c++-mode . c-or-c++-ts-mode)
+      (rust-mode . rust-ts-mode)
+      (python-mode . python-ts-mode)))
+    ;; :config
+    ;; (defun nf/treesit-install-all-languages ()
+    ;;     "Install all languages specified by `treesit-language-source-alist'."
+    ;;     (interactive)
+    ;;     (let ((languages (mapcar 'car treesit-language-source-alist)))
+    ;;     (dolist (lang languages)
+    ;;         (treesit-install-language-grammar lang)
+    ;;         (message "`%s' parser was installed." lang)
+    ;;         (sit-for 0.75)))))
+     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Key Bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -411,8 +444,8 @@ neither, we use the current indent-tabs-mode"
     (if (> space-count tab-count) (setq indent-tabs-mode nil))
     (if (> tab-count space-count) (setq indent-tabs-mode t))))
 
-(add-hook 'c-mode-hook 'infer-indentation-style)
-(add-hook 'c++-mode-hook 'infer-indentation-style)
+(add-hook 'c-ts-mode-hook 'infer-indentation-style)
+(add-hook 'c++-ts-mode-hook 'infer-indentation-style)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
