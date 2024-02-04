@@ -63,6 +63,13 @@ local plugins = {
 
   -- LSP support. Use lsp-zero for easy configuration
   {
+    'williamboman/mason.nvim',
+    build = ":MasonUpdate",
+    config = function()
+      require("mason").setup()
+    end
+  },
+  {
     'VonHeikemen/lsp-zero.nvim', 
     branch = 'v3.x',
     lazy = true,
@@ -72,13 +79,14 @@ local plugins = {
     'neovim/nvim-lspconfig',
     dependencies = {'hrsh7th/cmp-nvim-lsp'},
   },
+  --[[
   {
     'hrsh7th/nvim-cmp',
     dependencies = {
       {'L3MON4D3/LuaSnip'},
     }
   },
-
+  ]]
 
   --[[
   {'simrat39/rust-tools.nvim'},
@@ -194,7 +202,7 @@ vim.wo.number = true
 vim.wo.relativenumber = false
 vim.o.autochdir = true
 vim.cmd("autocmd BufEnter * set formatoptions-=r")
-vim.o.makeprg = 'make64'
+--vim.o.makeprg = 'make64'
 
 -- lsp config
 local lsp_zero = require('lsp-zero')
@@ -209,9 +217,9 @@ lsp_zero.on_attach(function(client, bufnr)
 end)
 
 require('lspconfig').clangd.setup{
-  flags = {
-    clangd = '/home/gbuilder/wkatcher/.vscode-server/data/User/globalStorage/llvm-vs-code-extensions.vscode-clangd/install/17.0.3/clangd_17.0.3/bin/clangd',
-  }
+  -- flags = {
+  --  clangd = '/home/gbuilder/wkatcher/.vscode-server/data/User/globalStorage/llvm-vs-code-extensions.vscode-clangd/install/17.0.3/clangd_17.0.3/bin/clangd',
+  -- }
 }
 
 -- ================= Key mappings ================= --
