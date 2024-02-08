@@ -150,6 +150,12 @@ local plugins = {
     }
   },
 
+  -- list of functions
+  {
+    "stevearc/aerial.nvim",
+    config = true,
+  },
+
   --[[
   {
     'dhananjaylatkar/cscope_maps.nvim',
@@ -253,4 +259,5 @@ vim.keymap.set('n', '<leader>g', builtin.grep_string, {desc = "telescope grep_st
 vim.keymap.set('n', '<leader>t', ':Neotree<CR>', {desc = "Neo-tree"})
 vim.keymap.set('n', '<leader>z', ':ZenMode<CR>', {desc = "Zen mode"})
 vim.keymap.set('n', '<leader>w', '<C-w><C-w>', {desc = "Next window"})
+vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>", {desc = "Aerial"})
 
