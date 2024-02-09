@@ -85,6 +85,34 @@
     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
     (add-hook 'helm-minibuffer-set-up-hook 'spacemacs//helm-hide-minibuffer-maybe))
 
+;; LSP config
+(setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs helm-lsp
+    projectile hydra flycheck company avy which-key helm-xref dap-mode))
+
+(when (cl-find-if-not #'package-installed-p package-selected-packages)
+  (package-refresh-contents)
+  (mapc #'package-install package-selected-packages))
+
+(setq read-process-output-max (* 1024 1024)
+      treemacs-space-between-root-nodes nil
+      company-idle-delay 0.0
+      company-minimum-prefix-length 1
+      lsp-idle-delay 0.1)  ;; clangd is fast
+
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (c++-ts-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
 (use-package doom-themes
     :config
     (load-theme 'doom-tokyo-night t))
@@ -200,6 +228,8 @@
 ;(setq shell-file-name "c:/apps/cygwin64/bin/bash.exe")
 ;(setq explicit-shell-file-name "c:/apps/cygwin64/bin/bash.exe")
 
+;; set font
+(set-frame-font "Inconsolata 12" nil t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -210,6 +240,7 @@
  '(backup-directory-alist '(("." . "~/backups")))
  '(blink-cursor-mode nil)
  '(c-basic-offset 4 t)
+ '(c-ts-mode-indent-offset 4)
  '(c-tab-always-indent nil)
  '(column-number-mode t)
  '(compilation-scroll-output t)
