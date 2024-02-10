@@ -118,7 +118,12 @@ local plugins = {
   -- fuzzy finder
   {
     'nvim-telescope/telescope.nvim',
-     dependencies = { {'nvim-lua/plenary.nvim'} }
+     dependencies = { {'nvim-lua/plenary.nvim'} },
+     opts = {
+       defaults = {
+         layout_strategy = 'vertical',
+       }
+     }
   }, 
   
   -- neotree file explorer
@@ -193,7 +198,7 @@ vim.o.incsearch = true             -- bool: Use incremental search
 vim.wo.number = true
 vim.wo.relativenumber = false
 vim.o.autochdir = true
-vim.cmd("autocmd BufEnter * set formatoptions-=r")
+vim.cmd("autocmd BufEnter * set formatoptions-=ro")
 vim.o.makeprg = 'make64'
 
 -- lsp config
@@ -240,6 +245,7 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, {desc = "telescope find_fi
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {desc = "telescope live_grep"})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {desc = "telescope buffers"})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {desc = "telescope help_tags"})
+vim.keymap.set('n', '<leader>fr', builtin.resume, {desc = "telescope resume"})
 vim.keymap.set('n', '<leader>g', builtin.grep_string, {desc = "telescope grep_string"})
 
 vim.keymap.set('n', '<leader>t', ':Neotree<CR>', {desc = "Neo-tree"})
