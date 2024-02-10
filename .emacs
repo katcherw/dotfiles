@@ -9,7 +9,8 @@
 ; package support. install new package with list-packages, then mark
 ; with i and press x
 (eval-when-compile
-    (require 'use-package))
+  (require 'use-package))
+(package-initialize)
 (add-to-list 'package-archives
     '("melpa" . "http://melpa.org/packages/")
     t)
@@ -20,6 +21,7 @@
 (use-package evil
     :defer t
     :init
+    (setq evil-want-keybinding nil)
     (setq evil-toggle-key "C-x C-z")
     (setq evil-insert-state-cursor '(bar "yellow"))
     (evil-mode t)
@@ -82,6 +84,34 @@
     (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
     (add-hook 'helm-minibuffer-set-up-hook 'spacemacs//helm-hide-minibuffer-maybe))
+
+;; LSP config
+(setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs helm-lsp
+    projectile hydra flycheck company avy which-key helm-xref dap-mode))
+
+(when (cl-find-if-not #'package-installed-p package-selected-packages)
+  (package-refresh-contents)
+  (mapc #'package-install package-selected-packages))
+
+(setq read-process-output-max (* 1024 1024)
+      treemacs-space-between-root-nodes nil
+      company-idle-delay 0.0
+      company-minimum-prefix-length 1
+      lsp-idle-delay 0.1)  ;; clangd is fast
+
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (c++-ts-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
 (use-package doom-themes
     :config
@@ -198,6 +228,8 @@
 ;(setq shell-file-name "c:/apps/cygwin64/bin/bash.exe")
 ;(setq explicit-shell-file-name "c:/apps/cygwin64/bin/bash.exe")
 
+;; set font
+(set-frame-font "Inconsolata 12" nil t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -208,6 +240,7 @@
  '(backup-directory-alist '(("." . "~/backups")))
  '(blink-cursor-mode nil)
  '(c-basic-offset 4 t)
+ '(c-ts-mode-indent-offset 4)
  '(c-tab-always-indent nil)
  '(column-number-mode t)
  '(compilation-scroll-output t)
@@ -249,6 +282,37 @@
         (setq indent-tabs-mode t)
         (setq python-indent-offset 4)))
 
+;; Tree-sitter
+;(use-package treesit
+;  :commands (treesit-install-language-grammar nf/treesit-install-all-languages)
+;  :init
+  (setq treesit-language-source-alist
+      '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+      (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+      (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+      (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+      (make . ("https://github.com/alemuller/tree-sitter-make"))
+      (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "ocaml/src" "ocaml"))
+      (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+      (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))))
+
+; use tree sitter modes instead of normal major modes
+(setq major-mode-remap-alist
+    '((c++-mode . c++-ts-mode)
+      (c-mode . c-ts-mode)
+      (c-or-c++-mode . c-or-c++-ts-mode)
+      (rust-mode . rust-ts-mode)
+      (python-mode . python-ts-mode)))
+    ;; :config
+    ;; (defun nf/treesit-install-all-languages ()
+    ;;     "Install all languages specified by `treesit-language-source-alist'."
+    ;;     (interactive)
+    ;;     (let ((languages (mapcar 'car treesit-language-source-alist)))
+    ;;     (dolist (lang languages)
+    ;;         (treesit-install-language-grammar lang)
+    ;;         (message "`%s' parser was installed." lang)
+    ;;         (sit-for 0.75)))))
+     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Key Bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -411,8 +475,8 @@ neither, we use the current indent-tabs-mode"
     (if (> space-count tab-count) (setq indent-tabs-mode nil))
     (if (> tab-count space-count) (setq indent-tabs-mode t))))
 
-(add-hook 'c-mode-hook 'infer-indentation-style)
-(add-hook 'c++-mode-hook 'infer-indentation-style)
+(add-hook 'c-ts-mode-hook 'infer-indentation-style)
+(add-hook 'c++-ts-mode-hook 'infer-indentation-style)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
