@@ -25,10 +25,16 @@ vim.opt.rtp:prepend(lazypath)
 local plugins = {
   -- Color scheme
   {
-    "folke/tokyonight.nvim",
+    --"folke/tokyonight.nvim",
     --'liuchengxu/space-vim-dark',
+    --'mellow-theme/mellow.nvim',
+    'mcchrish/zenbones.nvim',
+    dependencies = 'rktjmp/lush.nvim',
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
+    --opts = {
+      --mellow_bold_functions = true,
+    --},
   },
 
   -- Figures out spaces/tabs by reading existing file
@@ -53,8 +59,8 @@ local plugins = {
   {
     'nvim-lualine/lualine.nvim',
     opts = {
-      --theme = 'zenbones',
-      theme = 'tokyonight',
+      theme = 'zenbones',
+      --theme = 'tokyonight',
       icons_enabled = true,
       --component_separators = '|',
       --section_separators = '',
@@ -186,7 +192,11 @@ require("lazy").setup(plugins)
 
 vim.o.termguicolors = true
 vim.opt.showmode = false  -- don't need because of lualine
-vim.cmd.colorscheme('tokyonight-night')
+--vim.cmd.colorscheme('tokyonight-night')
+--vim.cmd.colorscheme('space-vim-dark')
+--vim.g.mellow_bold_functions = true
+--vim.cmd.colorscheme('mellow')
+vim.cmd.colorscheme('tokyobones')
 
 -- Indentation --
 vim.o.tabstop = 4					-- maximum width of tab character (measured in spaces)
