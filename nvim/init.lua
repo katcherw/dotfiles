@@ -277,3 +277,20 @@ vim.keymap.set('n', '<leader>z', ':ZenMode<CR>', {desc = "Zen mode"})
 vim.keymap.set('n', '<leader>w', '<C-w><C-w>', {desc = "Next window"})
 vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>", {desc = "Aerial"})
 
+vim.keymap.set('n', '<leader>dp', ':diffput<CR>', {desc = "diffput"})
+vim.keymap.set('n', '<leader>dg', ':diffget<CR>', {desc = "diffget"})
+
+-- diable lsp diagnostics
+vim.g["diagnostics_active"] = true
+function Toggle_diagnostics()
+    if vim.g.diagnostics_active then
+        vim.g.diagnostics_active = false
+        vim.diagnostic.disable()
+    else
+        vim.g.diagnostics_active = true
+        vim.diagnostic.enable()
+    end
+end
+
+vim.keymap.set('n', '<leader>xd', Toggle_diagnostics, { noremap = true, silent = true, desc = "Toggle vim diagnostics" })
+
