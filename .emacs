@@ -113,7 +113,11 @@
   :commands lsp)
 
 ;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ui
+    :config
+    (setq lsp-ui-sideline-diagnostic-max-lines 2)
+    :commands lsp-ui-mode)
+
 ;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
 (use-package doom-themes
@@ -134,6 +138,9 @@
     :init
     (cscope-setup)
     (setq cscope-dateabase-regexps '~))
+
+;; rust
+(use-package rustic)
 
 ;; use ibuffer instead of list-buffers
 (if (>= emacs-major-version 22) 
@@ -181,7 +188,7 @@
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;; Compiling defaults
-(setq compile-command "make64"
+(setq compile-command "cd ~/dev/libsdwan/scripts/build; ./build-apple.sh macos"
       compilation-window-height 20)
 
 ;; Wrap lines in compilation window
@@ -237,7 +244,7 @@
  '(asm-comment-char 59)
  '(backup-directory-alist '(("." . "~/backups")))
  '(blink-cursor-mode nil)
- '(c-basic-offset 4 t)
+ '(c-basic-offset 4)
  '(c-tab-always-indent nil)
  '(c-ts-mode-indent-offset 4)
  '(column-number-mode t)
@@ -250,7 +257,7 @@
  '(indent-tabs-mode nil)
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
-      '(treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
+      '(rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
  '(perl-tab-always-indent nil)
  '(scroll-conservatively 999)
  '(speedbar-tag-hierarchy-method nil)
@@ -326,6 +333,8 @@
 (evil-define-key 'normal 'global (kbd "<leader>g") '("grep symbol" . g-at-point))
 (evil-define-key 'normal 'global (kbd "<leader>b") '("buffer next" . switch-to-buffer))
 (evil-define-key 'normal 'global (kbd "<leader>o") '("other window" . next-multiframe-window))
+(evil-define-key 'normal 'global (kbd "<leader>w") '("other window" . next-multiframe-window))
+(evil-define-key 'normal 'global (kbd "<leader>k") '("kill buffer" . kill-buffer))
 (evil-define-key 'normal 'global (kbd "<leader>t") '("toggle line wrap" . toggle-truncate-lines))
 (evil-define-key 'normal 'global (kbd "<leader>r") '("find references" . lsp-find-references))
 ;(evil-define-key 'normal 'global (kbd "<leader>ff") '("find files" . helm-find))
