@@ -35,7 +35,8 @@
 
     :config
     (evil-set-leader 'normal (kbd "SPC"))
-    (evil-set-initial-state 'speedbar-mode 'emacs))
+    (evil-set-initial-state 'speedbar-mode 'emacs)
+    (evil-set-initial-state 'rustic-popup-mode 'emacs))
 
 (use-package evil-collection
     :after evil
@@ -138,7 +139,6 @@
     :defer t)
 
 (use-package org-modern
-    :defer t
     :config
     (with-eval-after-load 'org (global-org-modern-mode)))
 
@@ -148,6 +148,7 @@
 (add-hook 'c-ts-mode-hook 'eglot-ensure)
 (add-hook 'c-mode-hook 'eglot-ensure)
 (add-hook 'python-mode-hook 'eglot-ensure)
+(add-hook 'rustic-mode-hook 'eglot-ensure)
 
 ;; don't keep resizing echo area
 (setq eldoc-echo-area-use-multiline-p nil)
@@ -235,6 +236,9 @@
 ;; recent files
 (recentf-mode 1)
 
+;; put directories first in dired
+(setq dired-listing-switches "-lh --group-directories-first")
+
 ;; Avoid garbage characters in compilation window due to g++ outputting color
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 (defun my/ansi-colorize-buffer ()
@@ -272,7 +276,7 @@
  '(indent-tabs-mode nil)
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
-      '(org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
+      '(lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
  '(perl-tab-always-indent nil)
  '(scroll-conservatively 999)
  '(speedbar-tag-hierarchy-method nil)
