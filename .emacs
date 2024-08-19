@@ -191,7 +191,9 @@
 (blink-cursor-mode 0)
 
 ;; Change the grep defaults
-(setq grep-command "grep -nr "
+;(setq grep-command "grep -nr "
+(setq grep-command "rg --no-heading "
+      grep-use-null-device nil
       grep-window-height 20)
 
 ;; gets ANSI colors to work right in shell
@@ -236,8 +238,14 @@
 ;; recent files
 (recentf-mode 1)
 
+;; undo window changes with C-c left and C-c right
+(setq winner-mode 1)
+
+; stop making so many dired buffers
+(setf dired-kill-when-opening-new-dired-buffer t)
+
 ;; put directories first in dired
-(setq dired-listing-switches "-lh --group-directories-first")
+;(setq dired-listing-switches "-lh --group-directories-first")
 
 ;; Avoid garbage characters in compilation window due to g++ outputting color
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
@@ -395,11 +403,7 @@
 (evil-define-key 'normal 'global (kbd "<leader>sn") '("next result" . cscope-history-forward-line-current-result))
 (evil-define-key 'normal 'global (kbd "<leader>sN") '("previous result" . cscope-history-backward-line-current-result))
 
-(if (>= emacs-major-version 24)
-	(progn
-        (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1)
-        )
-    )
+(global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1)
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
@@ -426,7 +430,7 @@
 (defun gh (expr)
   "greps all header files"
   (interactive "sEnter search expression: ")
-  (grep-find (concat "find . -name \"*.h\" -exec grep -nH " expr " \{\} /dev/null ';'")))
+  (grep-find (concat "find . '(' -name \"*.h\" -o -name \"*.hpp\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
 
 (defun ga (expr)
   "greps all files"
