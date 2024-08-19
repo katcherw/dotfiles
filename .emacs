@@ -85,7 +85,8 @@
 (use-package corfu
     :defer t
     :init
-    (global-corfu-mode))
+    (global-corfu-mode)
+    (setq tab-always-indent 'complete))
 
 ; compiler warnings on screen in real time
 (use-package flycheck
