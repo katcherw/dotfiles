@@ -112,6 +112,8 @@
 
 (use-package doom-themes
     :config
+    (setq doom-tokyo-night-brighter-comments t)
+    (setq doom-tokyo-night-comment-bg t)
     (load-theme 'doom-tokyo-night t))
 
 ;; Much nicer mode line
@@ -193,7 +195,7 @@
 
 ;; Change the grep defaults
 ;(setq grep-command "grep -nr "
-(setq grep-command "rg --no-heading "
+(setq grep-command "rg --no-heading"
       grep-use-null-device nil
       grep-window-height 20)
 
@@ -312,7 +314,7 @@
 (add-hook 'python-mode-hook
     (lambda ()
         (setq tab-width 4)
-        (setq indent-tabs-mode t)
+        (setq indent-tabs-mode f)
         (setq python-indent-offset 4)))
 
   (setq treesit-language-source-alist
@@ -426,7 +428,8 @@
 (defun g (expr)
   "greps all c files"
   (interactive "sEnter search expression: ")
-  (grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" -o -name \"*.module\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
+    (grep-find (concat "rg --no-heading " expr)))
+  ;(grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" -o -name \"*.module\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
 
 (defun gh (expr)
   "greps all header files"
@@ -441,7 +444,9 @@
 (defun g-at-point ()
   "greps all c files in current directory for the word at the current point"
   (interactive)
-  (grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
+    (grep-find (concat "rg --no-heading " (current-word))))
+   ; (grep rg (current-word)))
+  ;(grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
 
 (defun dp ()
   "dired at project path"
