@@ -112,6 +112,8 @@
 
 (use-package doom-themes
     :config
+    (setq doom-tokyo-night-brighter-comments t)
+    (setq doom-tokyo-night-comment-bg t)
     (load-theme 'doom-tokyo-night t))
 
 ;; Much nicer mode line
@@ -196,7 +198,9 @@
 (blink-cursor-mode 0)
 
 ;; Change the grep defaults
-(setq grep-command "grep -nr "
+;(setq grep-command "grep -nr "
+(setq grep-command "rg --no-heading"
+      grep-use-null-device nil
       grep-window-height 20)
 
 ;; gets ANSI colors to work right in shell
@@ -241,8 +245,14 @@
 ;; recent files
 (recentf-mode 1)
 
+;; undo window changes with C-c left and C-c right
+(setq winner-mode 1)
+
+; stop making so many dired buffers
+(setf dired-kill-when-opening-new-dired-buffer t)
+
 ;; put directories first in dired
-(setq dired-listing-switches "-lh --group-directories-first")
+;(setq dired-listing-switches "-lh --group-directories-first")
 
 ;; Avoid garbage characters in compilation window due to g++ outputting color
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
@@ -308,7 +318,7 @@
 (add-hook 'python-mode-hook
     (lambda ()
         (setq tab-width 4)
-        (setq indent-tabs-mode t)
+        (setq indent-tabs-mode f)
         (setq python-indent-offset 4)))
 
   (setq treesit-language-source-alist
@@ -400,6 +410,8 @@
 (evil-define-key 'normal 'global (kbd "<leader>sn") '("next result" . cscope-history-forward-line-current-result))
 (evil-define-key 'normal 'global (kbd "<leader>sN") '("previous result" . cscope-history-backward-line-current-result))
 
+(global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1)
+
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
 (setq read-process-output-max (* 1024 1024))
@@ -420,12 +432,13 @@
 (defun g (expr)
   "greps all c files"
   (interactive "sEnter search expression: ")
-  (grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" -o -name \"*.module\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
+    (grep-find (concat "rg --no-heading " expr)))
+  ;(grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" -o -name \"*.module\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
 
 (defun gh (expr)
   "greps all header files"
   (interactive "sEnter search expression: ")
-  (grep-find (concat "find . -name \"*.h\" -exec grep -nH " expr " \{\} /dev/null ';'")))
+  (grep-find (concat "find . '(' -name \"*.h\" -o -name \"*.hpp\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
 
 (defun ga (expr)
   "greps all files"
@@ -435,7 +448,9 @@
 (defun g-at-point ()
   "greps all c files in current directory for the word at the current point"
   (interactive)
-  (grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
+    (grep-find (concat "rg --no-heading " (current-word))))
+   ; (grep rg (current-word)))
+  ;(grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
 
 (defun dp ()
   "dired at project path"
