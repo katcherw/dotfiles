@@ -143,6 +143,10 @@
     :config
     (with-eval-after-load 'org (global-org-modern-mode)))
 
+(use-package avy
+    :config
+    (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1))
+
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -264,7 +268,7 @@
  ;; If there is more than one, they won't work right.
  '(asm-comment-char 59)
  '(backup-directory-alist '(("." . "~/backups")))
- '(c-basic-offset 4)
+ '(c-basic-offset 4 t)
  '(c-tab-always-indent nil)
  '(c-ts-mode-indent-offset 4)
  '(column-number-mode t)
@@ -277,7 +281,7 @@
  '(indent-tabs-mode nil)
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
-      '(lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
+      '(avy lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
  '(perl-tab-always-indent nil)
  '(scroll-conservatively 999)
  '(speedbar-tag-hierarchy-method nil)
@@ -395,12 +399,6 @@
 (evil-define-key 'normal 'global (kbd "<leader>sb") '("display buffer" . cscope-display-buffer))
 (evil-define-key 'normal 'global (kbd "<leader>sn") '("next result" . cscope-history-forward-line-current-result))
 (evil-define-key 'normal 'global (kbd "<leader>sN") '("previous result" . cscope-history-backward-line-current-result))
-
-(if (>= emacs-major-version 24)
-	(progn
-        (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1)
-        )
-    )
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))

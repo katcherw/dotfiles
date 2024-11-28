@@ -26,6 +26,8 @@ fi
 
 unset rc
 
+export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
+
 eval "$(starship init bash)"
 
 source /usr/share/fzf/shell/key-bindings.bash
@@ -35,3 +37,9 @@ alias sd="cd \$(find ~ -type d -not -path '*/.git/*' | fzf)"
 . "$HOME/.cargo/env"
 
 alias e="emacs -nw"
+alias wezterm="flatpak run org.wezfurlong.wezterm"
+
+
+if [ -f ~/.config/exercism/exercism_completion.bash ]; then
+    source ~/.config/exercism/exercism_completion.bash
+fi
