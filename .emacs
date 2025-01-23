@@ -149,6 +149,16 @@
     :config
     (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1))
 
+(use-package copilot
+  :load-path "/home/bill/dev/copilot.el")
+  ;; :init
+  ;;   (setq copilot-node-executable "/home/bill/.nvm/versions/node/v22.12.0/bin/node"))
+
+;; (add-to-list 'load-path "/home/bill/dev/copilot.el")
+;; (require 'copilot)
+;(add-to-list 'exec-path "/home/bill/.nvm/versions/node/v22.12.0/bin")
+;; (add-hook 'prog-mode-hook 'copilot-mode)
+
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
