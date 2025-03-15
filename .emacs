@@ -149,6 +149,13 @@
     :config
     (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1))
 
+; clipboard pasting into org
+(use-package org-download
+    :config
+    (setq org-download-method 'directory)
+    (setq org-download-image-dir "./images")
+    (setq org-download-screenshot-method "wl-paste > %s"))
+    
 (use-package copilot
   :load-path "/home/bill/dev/copilot.el")
   ;; :init
@@ -261,6 +268,9 @@
 ; stop making so many dired buffers
 (setf dired-kill-when-opening-new-dired-buffer t)
 
+;; dired will guess a default target directory
+(setq dired-dwim-target t)
+
 ;; put directories first in dired
 ;(setq dired-listing-switches "-lh --group-directories-first")
 
@@ -301,7 +311,7 @@
  '(indent-tabs-mode nil)
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
-      '(avy lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
+      '(org-download avy lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
  '(perl-tab-always-indent nil)
  '(scroll-conservatively 999)
  '(speedbar-tag-hierarchy-method nil)
