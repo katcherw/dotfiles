@@ -1,34 +1,12 @@
-format = """
-[](#3B4252)\
-$hostname\
-[](bg:#434C5E fg:#3B4252)\
-$directory\
-[](fg:#434C5E bg:#5a435e)\
-$time\
-[ ](fg:#5a435e)\
-$status\
-"""
-command_timeout = 5000
-# Disable the blank line at the start of the prompt
-# add_newline = false
-
-# You can also replace your username with a neat symbol like  to save some space
-[hostname]
-ssh_only = false
-style = "bg:#3B4252"
-format = '[$ssh_symbol$hostname]($style)'
+#format = '$all'
+format = "$all$directory$character"
 
 [directory]
-style = "bg:#434C5E"
-format = "[ $path ]($style)"
-truncation_length = 3
+truncate_to_repo = false
+truncation_length = 10
 truncation_symbol = "…/"
+format = "[$path]($style)"
 
-[time]
-disabled = false
-time_format = "%R" # Hour:Minute Format
-style = "bg:#5a435e"
-format = '[ $time ]($style)'
-
-[status]
-disabled = false
+[python]
+style = 'purple'
+symbol = '  '

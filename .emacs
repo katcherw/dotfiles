@@ -151,6 +151,27 @@
     :config
     (with-eval-after-load 'org (global-org-modern-mode)))
 
+(use-package avy
+    :config
+    (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1))
+
+; clipboard pasting into org
+(use-package org-download
+    :config
+    (setq org-download-method 'directory)
+    (setq org-download-image-dir "./images")
+    (setq org-download-screenshot-method "wl-paste > %s"))
+    
+(use-package copilot
+  :load-path "/home/bill/dev/copilot.el")
+  ;; :init
+  ;;   (setq copilot-node-executable "/home/bill/.nvm/versions/node/v22.12.0/bin/node"))
+
+;; (add-to-list 'load-path "/home/bill/dev/copilot.el")
+;; (require 'copilot)
+;(add-to-list 'exec-path "/home/bill/.nvm/versions/node/v22.12.0/bin")
+;; (add-hook 'prog-mode-hook 'copilot-mode)
+
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -253,6 +274,9 @@
 ; stop making so many dired buffers
 (setf dired-kill-when-opening-new-dired-buffer t)
 
+;; dired will guess a default target directory
+(setq dired-dwim-target t)
+
 ;; put directories first in dired
 ;(setq dired-listing-switches "-lh --group-directories-first")
 
@@ -282,7 +306,7 @@
  ;; If there is more than one, they won't work right.
  '(asm-comment-char 59)
  '(backup-directory-alist '(("." . "~/backups")))
- '(c-basic-offset 4)
+ '(c-basic-offset 4 t)
  '(c-tab-always-indent nil)
  '(c-ts-mode-indent-offset 4)
  '(column-number-mode t)
