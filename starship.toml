@@ -9,4 +9,10 @@ format = "[$path]($style)"
 
 [python]
 style = 'purple'
-symbol = '  '
+symbol = ' '
+
+[gcloud]
+disabled = true
+
+[git_status]
+disabled = true
