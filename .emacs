@@ -45,6 +45,10 @@
     (setq evil-collection-mode-list (remove 'calc evil-collection-mode-list))
     (evil-collection-init))
 
+; make sure cargo is in path
+(setenv "PATH" (concat (getenv "PATH") ":~/.cargo/bin"))
+(add-to-list 'exec-path "~/.cargo/bin")
+
 ; use jj to leave insert mode - much easier than esc
 (use-package key-chord
     :defer t
@@ -160,6 +164,8 @@
   :load-path "/home/bill/dev/copilot.el")
   ;; :init
   ;;   (setq copilot-node-executable "/home/bill/.nvm/versions/node/v22.12.0/bin/node"))
+
+(use-package fzf)
 
 ;; (add-to-list 'load-path "/home/bill/dev/copilot.el")
 ;; (require 'copilot)
@@ -311,7 +317,7 @@
  '(indent-tabs-mode nil)
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
-      '(org-download avy lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
+      '(fzf org-download avy lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
  '(perl-tab-always-indent nil)
  '(scroll-conservatively 999)
  '(speedbar-tag-hierarchy-method nil)
