@@ -167,16 +167,13 @@
     (setq org-download-screenshot-method "wl-paste > %s"))
     
 (use-package copilot
-  :load-path "/home/bill/dev/copilot.el")
-  ;; :init
-  ;;   (setq copilot-node-executable "/home/bill/.nvm/versions/node/v22.12.0/bin/node"))
+  :vc (:url "https://github.com/copilot-emacs/copilot.el"
+            :rev :newest
+            :branch "main"))
+(use-package copilot-chat)
+(add-hook 'prog-mode-hook 'copilot-mode)
 
 (use-package fzf)
-
-;; (add-to-list 'load-path "/home/bill/dev/copilot.el")
-;; (require 'copilot)
-;(add-to-list 'exec-path "/home/bill/.nvm/versions/node/v22.12.0/bin")
-;; (add-hook 'prog-mode-hook 'copilot-mode)
 
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
@@ -366,7 +363,12 @@
  '(indent-tabs-mode nil)
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
-      '(fzf org-download avy lsp-mode org-modern olivetti magit corfu rustic treesit mood-line consult vertico key-chord spacemacs-theme spaceline fill-column-indicator evil doom-themes doom-modeline))
+      '(avy consult copilot copilot-chat corfu doom-modeline doom-themes
+           evil-collection fill-column-indicator flycheck fzf key-chord lsp-mode
+           magit olivetti orderless org-download org-modern rustic vertico
+           xcscope))
+ '(package-vc-selected-packages
+      '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main")))
  '(perl-tab-always-indent nil)
  '(scroll-conservatively 999)
  '(speedbar-tag-hierarchy-method nil)
