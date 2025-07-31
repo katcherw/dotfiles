@@ -203,6 +203,8 @@
           (lambda ()
             (local-set-key (kbd "C-c C-r") 'my/go-run)))
 
+;; Ensure font-lock is enabled for Python
+(add-hook 'python-mode-hook 'turn-on-font-lock)
 
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
@@ -504,19 +506,19 @@
 ;; (eval-after-load "XREF" '(progn
 ;;     (evil-define-key 'normal 'XREF-mode-map (kbd "RET") 'xref-goto-xref))
 
-(evil-define-key 'normal 'global (kbd "<leader>ss") '("find symbol" . cscope-find-this-symbol))
-(evil-define-key 'normal 'global (kbd "<leader>s=") '("find assignments to this symbol" . cscope-find-assignments-to-this-symbol))
-(evil-define-key 'normal 'global (kbd "<leader>sd") '("find global definition" . cscope-find-global-definition))
-(evil-define-key 'normal 'global (kbd "<leader>s.") '("find global definition no prompt" . cscope-find-global-definition-no-prompting))
-(evil-define-key 'normal 'global (kbd "<leader>sc") '("find functions calling this symbol" . cscope-find-functions-calling-this-function))
-(evil-define-key 'normal 'global (kbd "<leader>sC") '("find called functions" . cscope-find-called-functions))
-(evil-define-key 'normal 'global (kbd "<leader>st") '("find text string" . cscope-find-this-text-string))
-(evil-define-key 'normal 'global (kbd "<leader>se") '("find egrep pattern" . cscope-find-egrep-pattern))
-(evil-define-key 'normal 'global (kbd "<leader>sf") '("find find file" . cscope-find-this-file))
-(evil-define-key 'normal 'global (kbd "<leader>si") '("find files including file" . cscope-find-files-including-file))
-(evil-define-key 'normal 'global (kbd "<leader>sb") '("display buffer" . cscope-display-buffer))
-(evil-define-key 'normal 'global (kbd "<leader>sn") '("next result" . cscope-history-forward-line-current-result))
-(evil-define-key 'normal 'global (kbd "<leader>sN") '("previous result" . cscope-history-backward-line-current-result))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>ss") '("find symbol" . cscope-find-this-symbol))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>s=") '("find assignments to this symbol" . cscope-find-assignments-to-this-symbol))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>sd") '("find global definition" . cscope-find-global-definition))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>s.") '("find global definition no prompt" . cscope-find-global-definition-no-prompting))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>sc") '("find functions calling this symbol" . cscope-find-functions-calling-this-function))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>sC") '("find called functions" . cscope-find-called-functions))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>st") '("find text string" . cscope-find-this-text-string))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>se") '("find egrep pattern" . cscope-find-egrep-pattern))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>sf") '("find find file" . cscope-find-this-file))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>si") '("find files including file" . cscope-find-files-including-file))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>sb") '("display buffer" . cscope-display-buffer))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>sn") '("next result" . cscope-history-forward-line-current-result))
+(evil-define-key 'normal 'c++-mode-map (kbd "<leader>sN") '("previous result" . cscope-history-backward-line-current-result))
 
 (evil-define-key 'normal 'global (kbd "<leader>cc") 'copilot-chat-toggle)
 (evil-define-key 'normal 'global (kbd "<leader>cp") 'copilot-chat-yank)
