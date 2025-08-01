@@ -172,6 +172,8 @@
             :branch "main"))
 (use-package copilot-chat)
 (add-hook 'prog-mode-hook 'copilot-mode)
+(with-eval-after-load 'copilot
+  (define-key copilot-mode-map (kbd "TAB") #'copilot-accept-completion))
 
 (use-package fzf)
 
@@ -488,6 +490,13 @@
 (evil-define-key 'normal 'global (kbd "<leader>sn") '("next result" . cscope-history-forward-line-current-result))
 (evil-define-key 'normal 'global (kbd "<leader>sN") '("previous result" . cscope-history-backward-line-current-result))
 
+(evil-define-key 'normal 'global (kbd "<leader>cc") 'copilot-chat-toggle)
+(evil-define-key 'normal 'global (kbd "<leader>cp") 'copilot-chat-yank)
+(evil-define-key 'normal 'global (kbd "<leader>cy") 'copilot-chat-copy-code-at-point)
+(evil-define-key 'normal 'global (kbd "<leader>cb") 'copilot-chat-add-current-buffer)
+(evil-define-key 'normal 'global (kbd "<leader>cl") 'copilot-chat-list)
+(evil-define-key 'normal 'global (kbd "<leader>cd") 'copilot-chat-add-files-under-dir)
+
 (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1)
 
 ;; Make gc pauses faster by decreasing the threshold.
@@ -620,4 +629,16 @@ neither, we use the current indent-tabs-mode"
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Copilot Chat
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun copilot-chat-toggle ()
+  "Start a Copilot Chat instance if not running, or switch to it if already running."
+  (interactive)
+  (if-let ((buffer (get-buffer "*copilot-chat*")))
+      (switch-to-buffer buffer)
+    (copilot-chat)))
 
