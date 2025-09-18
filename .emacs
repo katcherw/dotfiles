@@ -49,6 +49,8 @@
     :config
     (setq evil-collection-key-blacklist '("SPC"))
     (setq evil-collection-mode-list (remove 'calc evil-collection-mode-list))
+    (with-eval-after-load 'evil-collection
+      (remove-hook 'evil-collection-mode-list 'org-mode))
     (evil-collection-init))
 
 ; make sure cargo is in path
@@ -498,6 +500,7 @@
 (evil-define-key 'normal 'global (kbd "<leader>cd") 'copilot-chat-add-files-under-dir)
 
 (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1)
+(evil-define-key 'normal 'global (kbd "S-u") 'revert-buffer)
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
