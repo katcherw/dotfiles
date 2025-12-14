@@ -49,3 +49,5 @@ export NVM_DIR="$HOME/.nvm"
 
 eval "$(zoxide init bash)"
 alias cd=z
+
+export EDITOR="emacs -nw"
