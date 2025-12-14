@@ -66,6 +66,7 @@
     (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
 
 ;; column indicator draws line at fill-column-mode
+;; This doesn't work right with copilot so disabled for now
 ;; (use-package fill-column-indicator
 ;;     :defer t
 ;;     :init
@@ -181,6 +182,7 @@
 
 (use-package fzf)
 
+<<<<<<< HEAD
 (use-package go-mode
   :ensure t
   :config
@@ -206,6 +208,8 @@
 ;; Ensure font-lock is enabled for Python
 (add-hook 'python-mode-hook 'turn-on-font-lock)
 
+=======
+>>>>>>> c2d2154 (disable fci, minor changes)
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -325,6 +329,9 @@
 ;(setq shell-file-name "c:/apps/cygwin64/bin/bash.exe")
 ;(setq explicit-shell-file-name "c:/apps/cygwin64/bin/bash.exe")
 
+; undo warning keeps popping up
+(add-to-list 'warning-suppress-types '(undo discard-info))
+
 ;; set font
 ;(set-frame-font "Inconsolata Nerd Font 16" nil t)
 ;(set-frame-font "Inconsolata Regular 14" nil t)
@@ -341,7 +348,7 @@
  ;; If there is more than one, they won't work right.
  '(asm-comment-char 59)
  '(backup-directory-alist '(("." . "~/backups")))
- '(c-basic-offset 4 t)
+ '(c-basic-offset 4)
  '(c-tab-always-indent nil)
  '(c-ts-mode-indent-offset 4)
  '(column-number-mode t)
@@ -396,9 +403,15 @@
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
       '(avy consult copilot copilot-chat corfu doom-modeline doom-themes
+<<<<<<< HEAD
            evil-collection fill-column-indicator flycheck fzf key-chord lsp-mode
            magit olivetti orderless org-download org-modern rustic vertico
            xcscope))
+=======
+           evil-collection exec-path-from-shell fill-column-indicator flycheck
+           fzf go-mode key-chord lsp-mode magit olivetti orderless org-download
+           org-modern rustic vertico xcscope))
+>>>>>>> c2d2154 (disable fci, minor changes)
  '(package-vc-selected-packages
       '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main")))
  '(perl-tab-always-indent nil)
@@ -427,7 +440,7 @@
 (add-hook 'python-mode-hook
     (lambda ()
         (setq tab-width 4)
-        (setq indent-tabs-mode f)
+        (setq indent-tabs-mode nil)
         (setq python-indent-offset 4)))
 
   (setq treesit-language-source-alist
