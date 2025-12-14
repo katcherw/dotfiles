@@ -66,12 +66,12 @@
     (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
 
 ;; column indicator draws line at fill-column-mode
-(use-package fill-column-indicator
-    :defer t
-    :init
-    (add-hook 'c-mode-hook 'fci-mode)
-    (add-hook 'c++-mode-hook 'fci-mode)
-    (setq fci-rule-color "#444444"))
+;; (use-package fill-column-indicator
+;;     :defer t
+;;     :init
+;;     (add-hook 'c-mode-hook 'fci-mode)
+;;     (add-hook 'c++-mode-hook 'fci-mode)
+;;     (setq fci-rule-color "#444444"))
 
 ; Completion user interface
 (use-package vertico
@@ -168,16 +168,41 @@
     (setq org-download-image-dir "./images")
     (setq org-download-screenshot-method "wl-paste > %s"))
     
-(use-package copilot
-  :vc (:url "https://github.com/copilot-emacs/copilot.el"
-            :rev :newest
-            :branch "main"))
-(use-package copilot-chat)
-(add-hook 'prog-mode-hook 'copilot-mode)
-(with-eval-after-load 'copilot
-  (define-key copilot-mode-map (kbd "TAB") #'copilot-accept-completion))
+(when (display-graphic-p)
+    (use-package copilot
+    :vc (:url "https://github.com/copilot-emacs/copilot.el"
+                :rev :newest
+                :branch "main"))
+    (use-package copilot-chat)
+    (add-hook 'prog-mode-hook 'copilot-mode)
+    (with-eval-after-load 'copilot
+    (define-key copilot-mode-map (kbd "TAB") #'copilot-accept-completion))
+)
 
 (use-package fzf)
+
+(use-package go-mode
+  :ensure t
+  :config
+  ;; Set up proper Go indentation (4 spaces, no tabs)
+  (add-hook 'go-mode-hook
+            (lambda ()
+              (setq tab-width 4
+                    indent-tabs-mode nil)
+              ;; Enable automatic formatting and import organization on save
+              (add-hook 'before-save-hook #'lsp-format-buffer nil t)
+              (add-hook 'before-save-hook #'lsp-organize-imports nil t)))
+  )
+
+;; Add a simple keybinding for running the Go program
+(defun my/go-run ()
+  (interactive)
+  (call-process-shell-command "go run ." nil "*Go Run*" t))
+
+(add-hook 'go-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-c C-r") 'my/go-run)))
+
 
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
@@ -186,6 +211,7 @@
 (add-hook 'c-mode-hook 'eglot-ensure)
 (add-hook 'python-mode-hook 'eglot-ensure)
 (add-hook 'rustic-mode-hook 'eglot-ensure)
+(add-hook 'go-mode-hook 'eglot-ensure)
 
 ;; don't keep resizing echo area
 (setq eldoc-echo-area-use-multiline-p nil)
@@ -500,7 +526,7 @@
 (evil-define-key 'normal 'global (kbd "<leader>cd") 'copilot-chat-add-files-under-dir)
 
 (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1)
-(evil-define-key 'normal 'global (kbd "S-u") 'revert-buffer)
+(evil-define-key 'normal 'global (kbd "s-u") 'revert-buffer)
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
