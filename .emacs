@@ -1,4 +1,5 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;/
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; Bill's emacs initialization file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -99,7 +100,12 @@
     :defer t
     :init
     (global-corfu-mode)
-    (setq tab-always-indent 'complete))
+    (setq tab-always-indent 'complete)
+    ;; show completions automatically as you type, instead of only
+    ;; on demand via M-TAB / TAB
+    (setq corfu-auto t
+          corfu-auto-delay 0.2
+          corfu-auto-prefix 2))
 
 ; compiler warnings on screen in real time
 (use-package flycheck
@@ -163,26 +169,25 @@
     (global-set-key (kbd "M-'") 'avy-goto-word-or-subword-1))
 
 ; clipboard pasting into org
-(use-package org-download
-    :config
-    (setq org-download-method 'directory)
-    (setq org-download-image-dir "./images")
-    (setq org-download-screenshot-method "wl-paste > %s"))
+;; (use-package org-download
+;;     :config
+;;     (setq org-download-method 'directory)
+;;     (setq org-download-image-dir "./images")
+;;     (setq org-download-screenshot-method "wl-paste > %s"))
     
-(when (display-graphic-p)
-    (use-package copilot
-    :vc (:url "https://github.com/copilot-emacs/copilot.el"
-                :rev :newest
-                :branch "main"))
-    (use-package copilot-chat)
-    (add-hook 'prog-mode-hook 'copilot-mode)
-    (with-eval-after-load 'copilot
-    (define-key copilot-mode-map (kbd "TAB") #'copilot-accept-completion))
-)
+;; (when (display-graphic-p)
+;;     (use-package copilot
+;;     :vc (:url "https://github.com/copilot-emacs/copilot.el"
+;;                 :rev :newest
+;;                 :branch "main"))
+;;     (use-package copilot-chat)
+;;     (add-hook 'prog-mode-hook 'copilot-mode)
+;;     (with-eval-after-load 'copilot
+;;     (define-key copilot-mode-map (kbd "TAB") #'copilot-accept-completion))
+;; )
 
 (use-package fzf)
 
-<<<<<<< HEAD
 (use-package go-mode
   :ensure t
   :config
@@ -208,8 +213,6 @@
 ;; Ensure font-lock is enabled for Python
 (add-hook 'python-mode-hook 'turn-on-font-lock)
 
-=======
->>>>>>> c2d2154 (disable fci, minor changes)
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -218,6 +221,16 @@
 (add-hook 'python-mode-hook 'eglot-ensure)
 (add-hook 'rustic-mode-hook 'eglot-ensure)
 (add-hook 'go-mode-hook 'eglot-ensure)
+
+;; clangd (and possibly other servers) reformat via LSP "on-type
+;; formatting" every time RET is pressed, since eglot treats
+;; newline-and-indent's "\n" insertion as a formatting trigger just
+;; like typing it directly. That's what moves an opening brace onto
+;; the previous line regardless of our own cc-mode indentation style.
+;; Disable just that capability; leave everything else eglot does
+;; (completion, diagnostics, xref, etc.) untouched.
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-ignored-server-capabilities :documentOnTypeFormattingProvider))
 
 ;; don't keep resizing echo area
 (setq eldoc-echo-area-use-multiline-p nil)
@@ -403,21 +416,14 @@
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
       '(avy consult copilot copilot-chat corfu doom-modeline doom-themes
-<<<<<<< HEAD
            evil-collection fill-column-indicator flycheck fzf key-chord lsp-mode
            magit olivetti orderless org-download org-modern rustic vertico
            xcscope))
-=======
-           evil-collection exec-path-from-shell fill-column-indicator flycheck
-           fzf go-mode key-chord lsp-mode magit olivetti orderless org-download
-           org-modern rustic vertico xcscope))
->>>>>>> c2d2154 (disable fci, minor changes)
  '(package-vc-selected-packages
       '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main")))
  '(perl-tab-always-indent nil)
  '(scroll-conservatively 999)
  '(speedbar-tag-hierarchy-method nil)
- '(tab-always-indent nil)
  '(tab-width 4)
  '(tags-case-fold-search nil)
  '(truncate-lines t)
@@ -453,6 +459,11 @@
       (python . ("https://github.com/tree-sitter/tree-sitter-python"))
       (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
       (go . ("https://github.com/tree-sitter/tree-sitter-go"))))
+
+;; Force Windows 11 Taskbar to group WSLg Wayland windows properly
+(when (eq window-system 'pgtk)
+  (setq frame-title-format "Emacs")
+  (modify-all-frames-parameters '((name . "Emacs"))))
 
 ;; Tree-sitter
 ;; (use-package treesit
