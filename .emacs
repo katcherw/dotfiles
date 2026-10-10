@@ -57,6 +57,8 @@
 (setenv "PATH" (concat (getenv "PATH") ":~/.cargo/bin"))
 (add-to-list 'exec-path "~/.cargo/bin")
 
+(add-to-list `exec-path (expand-file-name "~/go/bin"))
+
 ; use jj to leave insert mode - much easier than esc
 (use-package key-chord
     :defer t
@@ -182,7 +184,6 @@
 
 (use-package fzf)
 
-<<<<<<< HEAD
 (use-package go-mode
   :ensure t
   :config
@@ -208,8 +209,6 @@
 ;; Ensure font-lock is enabled for Python
 (add-hook 'python-mode-hook 'turn-on-font-lock)
 
-=======
->>>>>>> c2d2154 (disable fci, minor changes)
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -218,6 +217,34 @@
 (add-hook 'python-mode-hook 'eglot-ensure)
 (add-hook 'rustic-mode-hook 'eglot-ensure)
 (add-hook 'go-mode-hook 'eglot-ensure)
+
+;; eglot over tramp needs the remote language server on real pipes, not a tty.
+;;
+;; 1. By default tramp runs async processes through the shared ssh session's
+;;    pty.  The `stty raw' eglot prepends to the remote command then races with
+;;    the initialize request, which gets discarded by the line discipline about
+;;    half the time; eglot times out after 30s, no server is registered, and
+;;    every eglot/eldoc/flymake call afterwards fails with
+;;    "No current JSON-RPC connection".  Direct async processes avoid the
+;;    shared connection and give the local end a real pipe.
+;;
+;; 2. Direct async still passes "-t -t" to ssh, which allocates a pty on the
+;;    *remote* side.  A pty input buffer is a few KB with no flow control, so
+;;    the textDocument/didOpen carrying the file contents is silently
+;;    truncated: clangd sits waiting for the rest of the message and never
+;;    answers another request.  Dropping "-t -t" makes it pipes end to end.
+(with-eval-after-load 'tramp
+  (connection-local-set-profile-variables
+   'remote-direct-async-process
+   '((tramp-direct-async-process . t)))
+  (connection-local-set-profiles
+   '(:application tramp :protocol "ssh") 'remote-direct-async-process)
+  (dolist (method '("ssh" "scp" "sshx" "sshfs"))
+    (let ((entry (assq 'tramp-direct-async (assoc method tramp-methods))))
+      (when entry (setcdr entry (list t))))))
+
+;; remote clangd startup is slower than the 30s default is comfortable with
+(setq eglot-connect-timeout 60)
 
 ;; don't keep resizing echo area
 (setq eldoc-echo-area-use-multiline-p nil)
@@ -261,7 +288,7 @@
 
 ;; Change the grep defaults
 ;(setq grep-command "grep -nr "
-(setq grep-command "rg --no-heading"
+(setq grep-command "rg --no-heading -n -H . -e "
       grep-use-null-device nil
       grep-window-height 20)
 
@@ -403,15 +430,9 @@
  '(large-file-warning-threshold 100000000)
  '(package-selected-packages
       '(avy consult copilot copilot-chat corfu doom-modeline doom-themes
-<<<<<<< HEAD
-           evil-collection fill-column-indicator flycheck fzf key-chord lsp-mode
-           magit olivetti orderless org-download org-modern rustic vertico
-           xcscope))
-=======
            evil-collection exec-path-from-shell fill-column-indicator flycheck
            fzf go-mode key-chord lsp-mode magit olivetti orderless org-download
            org-modern rustic vertico xcscope))
->>>>>>> c2d2154 (disable fci, minor changes)
  '(package-vc-selected-packages
       '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main")))
  '(perl-tab-always-indent nil)
@@ -556,6 +577,19 @@
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
 
+;; Format tables in md files
+(defun my/markdown-align-all-tables ()
+  "Align all Org/Markdown tables in the buffer upon opening."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward-regexp "^[ \t]*|" nil t)
+      (when (org-at-table-p)
+        (org-table-align)
+        (goto-char (org-table-end))))))
+
+(add-hook 'markdown-mode-hook #'my/markdown-align-all-tables)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -563,7 +597,7 @@
 (defun g (expr)
   "greps all c files"
   (interactive "sEnter search expression: ")
-    (grep-find (concat "rg --no-heading " expr)))
+    (grep-find (concat "rg --no-heading -n -H " expr " .")))
   ;(grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" -o -name \"*.module\" ')' -exec grep -nH " expr " \{\} /dev/null ';'")))
 
 (defun gh (expr)
@@ -579,7 +613,7 @@
 (defun g-at-point ()
   "greps all c files in current directory for the word at the current point"
   (interactive)
-    (grep-find (concat "rg --no-heading " (current-word))))
+    (grep-find (concat "rg --no-heading -n -H " (current-word) " .")))
    ; (grep rg (current-word)))
   ;(grep-find (concat "find . '(' -name \"*.c\" -o -name \"*.h\" -o -name \"*.hpp\" -o -iname \"*.rs\" -o -name \"*.cc\" -o -name \"*.cpp\" -o -iname \"makefile\" ')' -exec grep -nH " (current-word) " \{\} /dev/null ';'")))
 
