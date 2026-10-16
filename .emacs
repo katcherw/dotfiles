@@ -182,7 +182,6 @@
 
 (use-package fzf)
 
-<<<<<<< HEAD
 (use-package go-mode
   :ensure t
   :config
@@ -208,8 +207,6 @@
 ;; Ensure font-lock is enabled for Python
 (add-hook 'python-mode-hook 'turn-on-font-lock)
 
-=======
->>>>>>> c2d2154 (disable fci, minor changes)
 ;; eglot
 (add-hook 'c++-ts-mode-hook 'eglot-ensure)
 (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -348,7 +345,7 @@
  ;; If there is more than one, they won't work right.
  '(asm-comment-char 59)
  '(backup-directory-alist '(("." . "~/backups")))
- '(c-basic-offset 4)
+ '(c-basic-offset 4 t)
  '(c-tab-always-indent nil)
  '(c-ts-mode-indent-offset 4)
  '(column-number-mode t)
@@ -401,17 +398,7 @@
  '(ediff-keep-variants nil)
  '(indent-tabs-mode nil)
  '(large-file-warning-threshold 100000000)
- '(package-selected-packages
-      '(avy consult copilot copilot-chat corfu doom-modeline doom-themes
-<<<<<<< HEAD
-           evil-collection fill-column-indicator flycheck fzf key-chord lsp-mode
-           magit olivetti orderless org-download org-modern rustic vertico
-           xcscope))
-=======
-           evil-collection exec-path-from-shell fill-column-indicator flycheck
-           fzf go-mode key-chord lsp-mode magit olivetti orderless org-download
-           org-modern rustic vertico xcscope))
->>>>>>> c2d2154 (disable fci, minor changes)
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
       '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main")))
  '(perl-tab-always-indent nil)
