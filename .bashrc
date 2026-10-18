@@ -37,6 +37,8 @@ alias sd="cd \$(find ~ -type d -not -path '*/.git/*' | fzf)"
 . "$HOME/.cargo/env"
 
 alias e="emacs -nw"
+alias gs="git status"
+alias gl="git log --oneline --graph --decorate"
 alias wezterm="flatpak run org.wezfurlong.wezterm"
 
 if [ -f ~/.config/exercism/exercism_completion.bash ]; then
